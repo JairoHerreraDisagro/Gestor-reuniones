@@ -1,0 +1,244 @@
+body {
+  font-family: Century Gothic, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.form-container {
+  width: 50%;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: left;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input, select {
+  width: 95%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: Century Gothic, sans-serif;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* Nuevas reglas para la fecha y hora en columnas */
+.date-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Espacio entre los campos de fecha y hora */
+  margin-bottom: 20px; /* Espacio debajo de la fecha y hora */
+}
+
+.input-group {
+  flex: 1;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+}
+
+.date-container .input-group:first-child {
+  margin-right: 10px; /* Espacio entre fecha y hora */
+}
+
+/* Personalización del calendario */
+.pika-single {
+  background-color: white !important;
+}
+
+.pika-lendar .pika-button {
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.pika-lendar .pika-button.pika-selected {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.pika-lendar .pika-button:hover {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.pika-lendar .pika-button.pika-button-day {
+  background-color: #ffffff !important;
+}
+
+.pika-lendar .pika-button.pika-button-day:hover {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.pika-lendar .pika-button.pika-day.selected {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.pika-lendar .pika-button.pika-current-day {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+/* Contenedor para el select y el botón */
+.cliente-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el select y el botón */
+  width: 100%; /* Aseguramos que ocupe el 100% del contenedor */
+}
+
+/* Estilos del select */
+#cliente {
+  flex-grow: 1; /* Hace que el select ocupe el máximo espacio disponible */
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Estilos del botón refrescar */
+.refresh-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  color: #4CAF50; /* Color verde, similar al del botón principal */
+  transition: color 0.3s ease;
+}
+
+/* Cambio de color al pasar el cursor sobre el botón */
+.refresh-button:hover {
+  color: white;
+}
+
+/* Estilos del icono */
+.refresh-button i {
+  margin: 0;
+}
+
+input[readonly] {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;    
+}
+
+/* Fila para País, Responsable y Correo */
+.row-container {
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos de manera equitativa */
+  gap: 20px; /* Espacio entre los elementos */
+  margin-bottom: 10px; /* Separación con los siguientes campos */
+  flex-wrap: wrap; /* Permite que los elementos se ajusten si no hay suficiente espacio */
+  width: 95%; /* Asegura que ocupe el 100% del espacio */
+}
+
+.row-container .input-group {
+  flex: 1; /* Hace que cada campo ocupe un espacio igual */
+  min-width: 250px; /* Evita que los elementos se hagan demasiado estrechos */
+}
+
+.row-container .input-group input,
+.row-container .input-group select {
+  width: 100%; /* Asegura que cada campo ocupe el espacio completo */
+}
+
+/* Espaciado entre las notas y el botón */
+textarea {
+  margin-bottom: 20px; /* Agrega espacio debajo del campo de notas */
+  margin-top: 10px;
+  border-radius: 5px;
+    font-family: Century Gothic, sans-serif;
+}
+
+/* Alinear el botón Enviar a la derecha */
+button[type="submit"] {
+  align-self: flex-end; /* Esto mueve el botón al lado derecho */
+}
+
+.submit-container {
+  text-align: right;
+  margin-top: 20px;
+}
+
+#submit-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#submit-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.feedback {
+  margin-top: 10px;
+  color: green;
+  font-weight: bold;
+}
+
+
+.form-banner {
+  height: 16px;
+  width: 100%;
+  background-color: #1D8348; /* Verde corporativo sobrio */
+
+}
+
+/* Contenedor del logo */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 12px;
+  background-color: white;
+}
+
+/* Estilo del logo */
+.form-logo {
+  max-height: 60px;
+  object-fit: contain;
+}
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestor de reuniones</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <div class="form-container">
+
+<!-- Encabezado visual -->
+<div class="form-banner"></div>
+
+<!-- Logo centrado fuera del banner -->
+<div class="logo-container">
+  <img src="logo.png" alt="Logo AgritecGEO" class="form-logo" />
+</div>
+
+
+
+    <h2>Agenda de reunión para clientes ERP + Planilla</h2>
+    <form id="meeting-form">
+  <div class="row-container">
+    <!-- País -->
+    <div class="input-group">
+      <label for="pais">País:</label>
+      <select id="pais" name="pais" required onchange="actualizarResponsable(); cargarClientes()">
+
+        <option value="Guatemala">Guatemala</option>
+        <option value="El Salvador">El Salvador</option>
+        <option value="Honduras">Honduras</option>
+        <option value="Nicaragua">Nicaragua</option>
+        <option value="Costa Rica">Costa Rica</option>
+        <option value="Panamá">Panamá</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Ecuador">Ecuador</option>
+      </select>
+    </div>
+
+    <!-- Responsable -->
+    <div class="input-group">
+      <label for="especialista">Responsable:</label>
+      <input type="text" id="especialista" name="especialista" required readonly>
+    </div>
+
+    <!-- Correo electrónico -->
+    <div class="input-group">
+      <label for="email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" required readonly>
+    </div>
+  </div>
+
+
+<label for="cliente">Cliente:</label>
+<div class="cliente-container">
+  <select id="cliente" name="cliente" required>
+    <!-- Las opciones se llenarán dinámicamente -->
+  </select>
+  <button type="button" class="refresh-button" title="Refrescar" onclick="cargarClientes()">
+    <i class="fas fa-sync-alt"></i>
+  </button>
+</div>
+
+
+      <label for="producto">Producto:</label>
+      <div class="cliente-container">
+      <select id="producto" name="producto" required>
+        <option value="ERP">ERP</option>
+        <option value="Planilla Agrícola">Planilla Agrícola</option>
+      </select>
+</div>
+      <div class="date-container">
+        <div>
+          <label for="fecha_inicio">Fecha de la reunión:</label>
+          <input type="text" id="fecha_inicio" name="fecha_inicio" required>
+        </div>
+        <div>
+          <label for="hora_inicio">Hora de inicio:</label>
+          <select id="hora_inicio" name="hora_inicio" required></select>
+        </div>
+        <div>
+          <label for="hora_fin">Hora de fin:</label>
+          <select id="hora_fin" name="hora_fin" required></select>
+        </div>
+      </div>
+
+
+      <label for="asunto">Asunto de la reunión:</label>
+      <input type="text" id="asunto" name="asunto" required>
+
+      <label for="emails">Lista de correos electrónicos:</label>
+      <textarea id="emails" name="emails" rows="4"></textarea>
+
+      <label for="mensaje">Mensaje:</label>
+      <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+
+  <div class="submit-container">
+  <button type="button" id="submit-btn">
+    <span id="submit-text">Enviar</span>
+    <span id="submit-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+  </button>
+  <div id="feedback-message" class="feedback"></div>
+</div>
+
+    </form>
+        
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
