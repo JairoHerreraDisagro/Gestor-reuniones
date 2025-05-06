@@ -1,161 +1,272 @@
-document.getElementById("soporteForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
+setTimeout(() => window.scrollTo(0, 0), 0);
 
-    let archivoInput = document.getElementById("archivo");
-    let archivos = archivoInput.files;
-    let archivosBase64 = [];
 
-    for (let archivo of archivos) {
-        if (archivo.size > 15 * 1024 * 1024) { // Límite de 15MB por archivo
-            alert(`El archivo "${archivo.name}" supera el límite de 15MB.`);
-            return;
-        }
-        let base64 = await convertirArchivoBase64(archivo);
-        archivosBase64.push({
-            nombre: archivo.name,
-            contenido: base64 // contenido limpio sin encabezado MIME
-        });
-    }
-
-    mostrarModal("Enviando solicitud... <br><br> <span class='loading-spinner'></span>");
-    await enviarFormulario(archivosBase64);
+const pickerInicio = new Pikaday({
+  field: document.getElementById('fecha_inicio'),
+  firstDay: 1,
+  minDate: new Date(),
+  disableDayFn: date => [0, 6].includes(date.getDay()),
+  i18n: {
+    previousMonth : 'Mes anterior',
+    nextMonth     : 'Mes siguiente',
+    months        : ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    weekdays      : ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    weekdaysShort : ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']
+  },
+  format: 'YYYY-MM-DD',
+  onSelect: function(date) {
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    document.getElementById('fecha_inicio').value = formattedDate;
+  }
 });
 
-async function convertirArchivoBase64(archivo) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(archivo);
-        reader.onload = function(e) {
-            const base64SinEncabezado = e.target.result.split(",")[1];
-            resolve(base64SinEncabezado);
-        };
-        reader.onerror = function(error) {
-            reject(error);
-        };
-    });
-}
-console.log("cargarClientesSoporte() fue llamada");
-async function cargarClientesSoporte() {
-    const paisSeleccionado = document.getElementById("pais").value;
-    console.log("👉 cargarClientesSoporte() fue llamada con país:", paisSeleccionado);
+// Cargar clientes desde Power Automate
+async function cargarClientes() {
+  console.log("Cargando clientes...");
+  const paisSeleccionado = document.getElementById("pais").value;
 
- try {
-    console.log("🌐 Ejecutando fetch hacia Power Automate...");
-
+  try {
     const response = await fetch('https://prod-180.westus.logic.azure.com:443/workflows/52f2f35e391e44a8908c520abe125e35/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=w2W7uCu_LhVhWPZwbkcKYqHVVYb61nH_ih8o2L-ZoQ0');
-
-    console.log("🧪 Response recibido:", response);
-
-    if (!response.ok) {
-        console.error(`❌ Error HTTP: ${response.status} - ${response.statusText}`);
-        return;
-    }
-
-    const contentType = response.headers.get("content-type");
-    console.log("📄 Content-Type recibido:", contentType);
-
     const data = await response.json();
-    console.log("📦 JSON recibido:", data);
 
     const clientes = data.clientes?.value || [];
+    const clientesFiltrados = clientes
+      .filter(c => c.País === paisSeleccionado)
+      .sort((a, b) => a.Cliente.localeCompare(b.Cliente));
 
-    const filtrados = clientes
-        .filter(c => c.País === paisSeleccionado)
-        .sort((a, b) => a.Cliente.localeCompare(b.Cliente));
+    const clienteSelect = document.getElementById("cliente");
+    clienteSelect.innerHTML = "";
 
-    const empresaSelect = document.getElementById("empresa");
-    empresaSelect.innerHTML = '<option value="" disabled selected>Seleccione una empresa</option>';
+    if (clientesFiltrados.length === 0) {
+      const opcion = document.createElement("option");
+      opcion.value = "";
+      opcion.textContent = "No hay clientes para este país";
+      clienteSelect.appendChild(opcion);
+    } else {
+      clientesFiltrados.forEach(cliente => {
+        const opcion = document.createElement("option");
+        opcion.value = cliente.Cliente;
+        opcion.textContent = cliente.Cliente;
+        clienteSelect.appendChild(opcion);
+      });
+    }
+  } catch (error) {
+    console.error("Error al cargar los clientes:", error);
+  }
+}
 
-    filtrados.forEach(cliente => {
-        const option = document.createElement("option");
-        option.value = cliente.Cliente;
-        option.textContent = cliente.Cliente;
-        empresaSelect.appendChild(option);
+// Función para actualizar el responsable y el correo según el país seleccionado
+function actualizarResponsable() {
+  const pais = document.getElementById('pais').value;
+  let responsable = '';
+  let email = '';
+
+  switch (pais) {
+    case 'Guatemala': responsable = 'Angélica Pineda'; email = 'apineda@disagro.com'; break;
+    case 'Honduras': responsable = 'Alejandra Alegría'; email = 'aalegria@disagro.com'; break;
+    case 'El Salvador': responsable = 'César Quezada'; email = 'cequezada@disagro.com'; break;
+    case 'Nicaragua': responsable = 'Cesia Herrera'; email = 'cherrera@disagro.com'; break;
+    case 'Costa Rica': responsable = 'Luis Romero'; email = 'luis.romero@abopac.com'; break;
+    case 'Panamá': responsable = 'Benigno Morales'; email = 'benigno.morales@abopac.com'; break;
+    case 'Colombia': responsable = 'Mayra Mejía'; email = 'mmejia@precisagro.com.co'; break;
+    case 'Ecuador': responsable = 'Joseph Prado'; email = 'jprado@precisagro.com.ec'; break;
+  }
+
+  document.getElementById('especialista').value = responsable;
+  document.getElementById('email').value = email;
+}
+
+// Envío del formulario
+async function enviarFormulario() {
+  const fechaInicio = document.getElementById("fecha_inicio").value;
+  const horaInicio = document.getElementById("hora_inicio").value;
+  const horaFin = document.getElementById("hora_fin").value;
+
+  const inicio = new Date(`${fechaInicio}T${horaInicio}`);
+  const fin = new Date(`${fechaInicio}T${horaFin}`);
+
+  if (fin <= inicio) {
+    alert("La hora de fin debe ser mayor que la de inicio.");
+    return;
+  }
+
+  const datos = {
+    programaciones: [
+      {
+        pais: document.getElementById("pais").value,
+        especialista: document.getElementById("especialista").value,
+        email: document.getElementById("email").value,
+        cliente: document.getElementById("cliente").value,
+        producto: document.getElementById("producto").value,
+        fecha_inicio: fechaInicio,
+        hora_inicio: horaInicio,
+        hora_fin: horaFin,
+        asunto: document.getElementById("asunto").value,
+        emails: document.getElementById("emails").value,
+        mensaje: document.getElementById("mensaje").value
+      }
+    ]
+  };
+
+  const url = "https://prod-24.westus.logic.azure.com:443/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vACIFhnbaTMAADO936K179YHbU3B80cRRN-aaGeHEio";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
     });
 
-    console.log("✅ Empresas cargadas:", filtrados.map(c => c.Cliente));
-} catch (error) {
-    console.error("🔥 Error en fetch:", error);
-}
+    if (response.ok) {
+      alert("Espacio asignado correctamente.");
+      document.getElementById("meeting-form").reset();
 
-}
-
-
-
-async function enviarFormulario(archivosBase64) {
-    let datos = {
-        titulo: document.getElementById("titulo").value.trim(),
-        pais: document.getElementById("pais").value.trim(),
-        nombre: document.getElementById("nombre").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        celular: document.getElementById("celular").value.trim(),
-        empresa: document.getElementById("empresa").value.trim(),
-        sistema: document.getElementById("Software").value,
-        problema: document.getElementById("problema").value.trim(),
-        problemasERP: obtenerProblemasERP(),
-        archivos: archivosBase64
-    };
-
-    try {
-        let respuesta = await fetch("https://prod-16.westus.logic.azure.com:443/workflows/2cfaeb058ecb47e5b679c083da7b1d44/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=pbZy62GIyFMt6GheeC82rP90gXBdwiLfE2hWjz_BQZQ", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(datos)
-        });
-
-        if (respuesta.ok) {
-            mostrarModal("✅ Su solicitud ha sido enviada con éxito. <br> Revise su correo electrónico para el seguimiento a su requerimiento.");
-            setTimeout(() => cerrarModal(), 3000);
-            document.getElementById("soporteForm").reset();
-
-            let erpOptions = document.getElementById("erpOptions");
-            if (erpOptions) {
-                erpOptions.style.display = "none";
-            }
-        } else {
-            mostrarModal("❌ Error al enviar el formulario. Inténtelo de nuevo.");
-            setTimeout(() => cerrarModal(), 3000);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        mostrarModal("⚠️ Hubo un problema al enviar los datos. Verifique su conexión e inténtelo de nuevo.");
-        setTimeout(() => cerrarModal(), 3000);
-    }
-}
-
-function mostrarModal(mensaje) {
-    let modal = document.getElementById("modal");
-    let modalMessage = document.getElementById("modal-message");
-    modalMessage.innerHTML = mensaje;
-    modal.style.display = "flex";
-}
-
-function cerrarModal() {
-    let modal = document.getElementById("modal");
-    modal.style.display = "none";
-}
-
-function mostrarOpcionesERP() {
-    var softwareSeleccionado = document.getElementById("Software").value;
-    var erpOptions = document.getElementById("erpOptions");
-
-    if (softwareSeleccionado === "ERP") {
-        erpOptions.style.display = "block";
+      actualizarResponsable();
+      cargarClientes();
     } else {
-        erpOptions.style.display = "none";
+      alert("Hubo un error para asignar el espacio.");
     }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Ocurrió un error al enviar el formulario.");
+  }
 }
 
-function obtenerProblemasERP() {
-    let checkboxes = document.querySelectorAll('input[name="erpProblema"]:checked');
-    return Array.from(checkboxes).map(checkbox => checkbox.value);
+
+// Generar horas de inicio y fin
+function generarHorarios() {
+  const horaInicioSelect = document.getElementById('hora_inicio');
+  const horaFinSelect = document.getElementById('hora_fin');
+
+  horaInicioSelect.innerHTML = '';
+  horaFinSelect.innerHTML = '';
+
+  const start = 8;
+  const end = 16; // hasta las 16:30
+  for (let h = start; h <= end; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      const hora = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      const option = new Option(hora, hora);
+      horaInicioSelect.appendChild(option);
+    }
+  }
+
+  // Mostrar horas fin para la hora inicial por defecto
+  actualizarHorasFin();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const paisSelect = document.getElementById("pais");
-    if (paisSelect) {
-        paisSelect.addEventListener("change", cargarClientesSoporte);
-        console.log("🎯 Evento change registrado para #pais");
+function actualizarHorasFin() {
+  const horaInicio = document.getElementById('hora_inicio').value;
+  const [h, m] = horaInicio.split(':').map(Number);
+  const inicioMinutos = h * 60 + m;
+
+  const horaFinSelect = document.getElementById('hora_fin');
+  horaFinSelect.innerHTML = '';
+
+  const end = 18 * 60; // 18:00 en minutos
+
+  for (let minutos = inicioMinutos + 30; minutos <= end; minutos += 30) {
+    const hora = `${String(Math.floor(minutos / 60)).padStart(2, '0')}:${String(minutos % 60).padStart(2, '0')}`;
+    const option = new Option(hora, hora);
+    horaFinSelect.appendChild(option);
+  }
+}
+
+document.getElementById("submit-btn").addEventListener("click", async function () {
+  const btn = this;
+  const spinner = document.getElementById("submit-spinner");
+  const text = document.getElementById("submit-text");
+  const feedback = document.getElementById("feedback-message");
+
+  // Bloquear botón
+  btn.disabled = true;
+  text.style.display = "none";
+  spinner.style.display = "inline-block";
+  feedback.textContent = "";
+
+  // Validación mínima de hora
+  const fechaInicio = document.getElementById("fecha_inicio").value;
+  const horaInicio = document.getElementById("hora_inicio").value;
+  const horaFin = document.getElementById("hora_fin").value;
+  const inicio = new Date(`${fechaInicio}T${horaInicio}`);
+  const fin = new Date(`${fechaInicio}T${horaFin}`);
+  if (fin <= inicio) {
+    feedback.textContent = "La hora de fin debe ser mayor que la de inicio.";
+    feedback.style.color = "red";
+    resetBoton();
+    return;
+  }
+
+  const datos = {
+    programaciones: [{
+      pais: document.getElementById("pais").value,
+      especialista: document.getElementById("especialista").value,
+      email: document.getElementById("email").value,
+      cliente: document.getElementById("cliente").value,
+      producto: document.getElementById("producto").value,
+      fecha_inicio: fechaInicio,
+      hora_inicio: horaInicio,
+      hora_fin: horaFin,
+      asunto: document.getElementById("asunto").value,
+      emails: document.getElementById("emails").value,
+      mensaje: document.getElementById("mensaje").value
+    }]
+  };
+
+  const url = "https://prod-24.westus.logic.azure.com:443/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vACIFhnbaTMAADO936K179YHbU3B80cRRN-aaGeHEio";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
+    });
+
+if (response.ok) {
+  feedback.textContent = "✅ Espacio asignado correctamente.";
+  feedback.style.color = "green";
+  document.getElementById("meeting-form").reset();
+
+  actualizarResponsable();
+  cargarClientes();
+
+   setTimeout(() => {
+    // 🔝 Scroll arriba suavemente
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // 🧹 Esperar 1 segundo más y limpiar el mensaje
+    setTimeout(() => {
+      feedback.textContent = "";
+    }, 1000);
+  }, 2000);
+}
+ else {
+      feedback.textContent = "❌ Hubo un error al asignar el espacio.";
+      feedback.style.color = "red";
     }
+  } catch (error) {
+    console.error("Error:", error);
+    feedback.textContent = "❌ Error de red al enviar la solicitud.";
+    feedback.style.color = "red";
+  }
+
+  resetBoton();
+
+  function resetBoton() {
+    btn.disabled = false;
+    spinner.style.display = "none";
+    text.style.display = "inline";
+  }
 });
 
+
+// Al cargar el DOM
+document.addEventListener('DOMContentLoaded', function () {
+  console.log("Formulario cargado.");
+  actualizarResponsable();
+  cargarClientes();
+  generarHorarios();
+  document.getElementById('hora_inicio').addEventListener('change', actualizarHorasFin);
+  window.onload = () => window.scrollTo({ top: 0 });
+
+});
