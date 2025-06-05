@@ -62,7 +62,7 @@ function actualizarResponsable() {
   let email = '';
 
   switch (pais) {
-    case 'Guatemala': responsable = 'Angélica Pineda'; email = 'apineda@disagro.com'; break;
+    case 'Guatemala': responsable = 'Angélica Pineda'; email = 'aspineda@disagro.com'; break;
     case 'Honduras': responsable = 'Alejandra Alegría'; email = 'aalegria@disagro.com'; break;
     case 'El Salvador': responsable = 'César Quezada'; email = 'cequezada@disagro.com'; break;
     case 'Nicaragua': responsable = 'Cesia Herrera'; email = 'cherrera@disagro.com'; break;
