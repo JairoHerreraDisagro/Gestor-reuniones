@@ -5,8 +5,7 @@ const pickerInicio = new Pikaday({
   field: document.getElementById('fecha_inicio'),
   firstDay: 1,
   minDate: new Date(),
- disableDayFn: date => date.getDay() === 0
-
+  disableDayFn: date => date.getDay() === 0, // ❌ Solo desactiva domingos (0)
   i18n: {
     previousMonth : 'Mes anterior',
     nextMonth     : 'Mes siguiente',
@@ -20,6 +19,7 @@ const pickerInicio = new Pikaday({
     document.getElementById('fecha_inicio').value = formattedDate;
   }
 });
+
 
 // Cargar clientes desde Power Automate
 async function cargarClientes() {
