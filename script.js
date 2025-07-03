@@ -5,7 +5,8 @@ const pickerInicio = new Pikaday({
   field: document.getElementById('fecha_inicio'),
   firstDay: 1,
   minDate: new Date(),
-  disableDayFn: date => [0, 6].includes(date.getDay()),
+ disableDayFn: date => date.getDay() === 0
+
   i18n: {
     previousMonth : 'Mes anterior',
     nextMonth     : 'Mes siguiente',
