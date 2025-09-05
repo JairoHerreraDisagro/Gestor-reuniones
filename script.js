@@ -27,7 +27,7 @@ async function cargarClientes() {
   const paisSeleccionado = document.getElementById("pais").value;
 
   try {
-    const response = await fetch('https://prod-180.westus.logic.azure.com:443/workflows/52f2f35e391e44a8908c520abe125e35/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=w2W7uCu_LhVhWPZwbkcKYqHVVYb61nH_ih8o2L-ZoQ0');
+    const response = await fetch('https://default93a2cd4474774ba69ca3e4e7aaf9c2.dd.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7NDQLoGrMhObGxf2EO36tBBpfkkOW2qyr78cKcbjFIA');
     const data = await response.json();
 
     const clientes = data.clientes?.value || [];
