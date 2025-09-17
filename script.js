@@ -109,7 +109,7 @@ async function enviarFormulario() {
     ]
   };
 
-  const url = "https://prod-24.westus.logic.azure.com:443/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vACIFhnbaTMAADO936K179YHbU3B80cRRN-aaGeHEio";
+  const url = "https://default93a2cd4474774ba69ca3e4e7aaf9c2.dd.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7NDQLoGrMhObGxf2EO36tBBpfkkOW2qyr78cKcbjFIA";
 
   try {
     const response = await fetch(url, {
@@ -214,7 +214,7 @@ document.getElementById("submit-btn").addEventListener("click", async function (
     }]
   };
 
-  const url = "https://prod-24.westus.logic.azure.com:443/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vACIFhnbaTMAADO936K179YHbU3B80cRRN-aaGeHEio";
+  const url = "https://default93a2cd4474774ba69ca3e4e7aaf9c2.dd.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c7eefd7b75e9417899ed455b878c4212/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7NDQLoGrMhObGxf2EO36tBBpfkkOW2qyr78cKcbjFIA";
 
   try {
     const response = await fetch(url, {
