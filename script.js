@@ -65,7 +65,7 @@ function actualizarResponsable() {
   switch (pais) {
     case 'Guatemala': responsable = 'Angélica Pineda'; email = 'aspineda@disagro.com'; break;
     case 'Honduras': responsable = 'Alejandra Alegría'; email = 'aalegria@disagro.com'; break;
-    case 'El Salvador': responsable = 'César Quezada'; email = 'cequezada@disagro.com'; break;
+    case 'El Salvador': responsable = 'Alfredo Lino'; email = 'Alino@disagro.com'; break;
     case 'Nicaragua': responsable = 'Cesia Herrera'; email = 'cherrera@disagro.com'; break;
     case 'Costa Rica': responsable = 'Luis Romero'; email = 'luis.romero@abopac.com'; break;
     case 'Panamá': responsable = 'Benigno Morales'; email = 'benigno.morales@abopac.com'; break;
